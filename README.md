@@ -10,5 +10,5 @@ docker build -t my-app:v1 .
 Run:
 
 ```
-docker run -P -p 8080:8080 my-app:v1
+docker run -P -p 8080:8080 -e GREETING=Howdy my-app:v1
 ```

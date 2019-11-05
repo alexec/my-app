@@ -6,12 +6,24 @@ jobs:
      - run: |
         echo 'export IMAGE_TAG=$(git rev-parse HEAD | head -c 7)' >> $BASH_ENV
         source $BASH_ENV
+
      - checkout
+
      - run: |
         echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
         docker build -t gitopsworkshop/my-app:$IMAGE_TAG .
 
      - run: docker build -t gitopsworkshop/my-app:$IMAGE_TAG .
 
+     - run: docker push gitopsworkshop/my-app:$IMAGE_TAG
+
      - run: |
-        [[ $CIRCLE_BRANCH == 'master' ]] && docker push gitopsworkshop/my-app:$IMAGE_TAG
+        if [[ ! -z $CIRCLE_PULL_REQUEST ]]; then
+            docker run --rm -it -e ARGOCD_OPTS=$ARGOCD_OPTS -e ARGOCD_SERVER=$ARGOCD_SERVER -e ARGOCD_AUTH_TOKEN=$ARGOCD_AUTH_TOKEN argoproj/argocd:v1.3.0-rc4 bash -c "
+                argocd app create preview-$IMAGE_TAG \
+                    --repo $CIRCLE_REPOSITORY_URL
+                    --path .
+                    --dest-server https://kubernetes.default.svc \
+                    --dest-namespace workshop \
+                    --nameprefix preview-$IMAGE_TAG"
+        fi

@@ -9,3 +9,6 @@ jobs:
         docker build -t gitopsworkshop/my-app:$(git rev-parse HEAD) .
 
      - run: docker build -t gitopsworkshop/my-app:$(git rev-parse HEAD) .
+
+     - run: |
+        [[ $CIRCLE_BRANCH == 'master' ]] && docker push gitopsworkshop/my-app:$(git rev-parse HEAD)

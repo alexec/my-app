@@ -3,12 +3,15 @@ jobs:
   build:
     machine: true
     steps:
+     - run: |
+        echo 'export IMAGE_TAG=$(git rev-parse HEAD | head -c 7)' >> $BASH_ENV
+        source $BASH_ENV
      - checkout
      - run: |
         echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
-        docker build -t gitopsworkshop/my-app:$(git rev-parse HEAD) .
+        docker build -t gitopsworkshop/my-app:$IMAGE_TAG .
 
-     - run: docker build -t gitopsworkshop/my-app:$(git rev-parse HEAD) .
+     - run: docker build -t gitopsworkshop/my-app:$IMAGE_TAG .
 
      - run: |
-        [[ $CIRCLE_BRANCH == 'master' ]] && docker push gitopsworkshop/my-app:$(git rev-parse HEAD)
+        [[ $CIRCLE_BRANCH == 'master' ]] && docker push gitopsworkshop/my-app:$IMAGE_TAG

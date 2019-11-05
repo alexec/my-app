@@ -21,8 +21,9 @@ jobs:
         if [[ ! -z $CIRCLE_PULL_REQUEST ]]; then
             docker run --rm -it -e ARGOCD_OPTS=$ARGOCD_OPTS -e ARGOCD_SERVER=$ARGOCD_SERVER -e ARGOCD_AUTH_TOKEN=$ARGOCD_AUTH_TOKEN argoproj/argocd:v1.3.0-rc4 bash -c "
                 argocd app create preview-$IMAGE_TAG \
-                    --repo $CIRCLE_REPOSITORY_URL
-                    --path .
+                    --project demo
+                    --repo $CIRCLE_REPOSITORY_URL \
+                    --path . \
                     --dest-server https://kubernetes.default.svc \
                     --dest-namespace workshop \
                     --nameprefix preview-$IMAGE_TAG"

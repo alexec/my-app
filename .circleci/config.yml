@@ -5,6 +5,7 @@ jobs:
     steps:
      - run: |
         echo 'export IMAGE_TAG=$(git rev-parse HEAD | head -c 7)' >> $BASH_ENV
+        echo 'export PR_NUM=$(echo $CIRCLE_PULL_REQUEST | rev | cut -d/ -f1 | rev)' >> $BASH_ENV
         source $BASH_ENV
 
      - checkout
@@ -18,19 +19,18 @@ jobs:
      - run: docker push gitopsworkshop/my-app:$IMAGE_TAG
 
      - run: |
-        if [[ ! -z $CIRCLE_PR_NUMBER ]]; then
-            curl -o ./argocd -L https://github.com/argoproj/argo-cd/releases/download/v1.3.0-rc4/argocd-linux-amd64 && chmod +x ./argocd
-            argocd app create preview-$CIRCLE_PR_NUMBER \
+        curl -o ./argocd -L https://github.com/argoproj/argo-cd/releases/download/v1.3.0-rc4/argocd-linux-amd64 && chmod +x ./argocd
+        if [[ ! -z $PR_NUM ]]; then
+            ./argocd app create preview-$PR_NUM \
                 --project demo \
                 --repo https://github.com/gitops-workshop/my-app-deployment \
                 --path . \
                 --dest-server https://kubernetes.default.svc \
                 --dest-namespace workshop \
-                --nameprefix preview-$CIRCLE_PR_NUMBER \
+                --nameprefix preview-$PR_NUM \
                 --sync-policy automated
-            curl -H "Authorization: token $GITHUB_TOKEN" -XPOST -d "{\"event\": \"COMMENT\",  \"body\": \"Preview Application URL: https://$ARGOCD_SERVER/applications/preview-$CIRCLE_PR_NUMBER\"}" \
-                https://api.github.com/repos/gitops-workshop/my-app/pulls/$CIRCLE_PR_NUMBER/reviews
+            curl -H "Authorization: token $GITHUB_TOKEN" -XPOST -d "{\"event\": \"COMMENT\",  \"body\": \"Preview Application URL: https://$ARGOCD_SERVER/applications/preview-$PR_NUM\"}" \
+                https://api.github.com/repos/gitops-workshop/my-app/pulls/$PR_NUM/reviews
         else
-            docker run --rm -it -e ARGOCD_OPTS=$ARGOCD_OPTS -e ARGOCD_SERVER=$ARGOCD_SERVER -e ARGOCD_AUTH_TOKEN=$ARGOCD_AUTH_TOKEN argoproj/argocd:v1.3.0-rc4 bash -c "
-                argocd app delete preview-$IMAGE_TAG || true"
+            ./argocd app delete preview-$PR_NUM || true
         fi

@@ -18,7 +18,7 @@ jobs:
      - run: docker push gitopsworkshop/my-app:$IMAGE_TAG
 
      - run: |
-        if [[ ! -z $CIRCLE_PULL_REQUEST ]]; then
+        if [[ -z $CIRCLE_PULL_REQUEST ]]; then
             docker run --rm -it -e ARGOCD_OPTS=$ARGOCD_OPTS -e ARGOCD_SERVER=$ARGOCD_SERVER -e ARGOCD_AUTH_TOKEN=$ARGOCD_AUTH_TOKEN argoproj/argocd:v1.3.0-rc4 bash -c "
                 argocd app create preview-$IMAGE_TAG \
                     --project demo

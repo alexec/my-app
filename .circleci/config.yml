@@ -22,7 +22,7 @@ jobs:
             docker run --rm -it -e ARGOCD_OPTS=$ARGOCD_OPTS -e ARGOCD_SERVER=$ARGOCD_SERVER -e ARGOCD_AUTH_TOKEN=$ARGOCD_AUTH_TOKEN argoproj/argocd:v1.3.0-rc4 bash -c "
                 argocd app create preview-$IMAGE_TAG \
                     --project demo \
-                    --repo $CIRCLE_REPOSITORY_URL \
+                    --repo https://github.com/gitops-workshop/my-app-deployment \
                     --path . \
                     --dest-server https://kubernetes.default.svc \
                     --dest-namespace workshop \

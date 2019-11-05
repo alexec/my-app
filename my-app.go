@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 )
 
 func main() {
+	log.Println("Listening port 8080")
 	http.HandleFunc("/", handler)
 	_ = http.ListenAndServe(":8080", nil)
 }

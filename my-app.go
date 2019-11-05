@@ -14,5 +14,5 @@ func main() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, os.Getenv("GREETING"))
+	_, _ = fmt.Fprintf(w, "Hello "+os.Getenv("GREETING"))
 }

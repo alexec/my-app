@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+     - checkout
+     - run: |
+        echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+        docker build -t gitopsworkshop/my-app:$(git rev-parse HEAD) .
+
+     - run: docker build -t gitopsworkshop/my-app:$(git rev-parse HEAD) .

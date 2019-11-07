@@ -12,3 +12,9 @@ Run:
 ```
 docker run -P -p 8080:8080 -e GREETING=Howdy my-app:v1
 ```
+
+### Clean Up
+
+```
+docker rmi my-app:v1
+```

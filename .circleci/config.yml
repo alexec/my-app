@@ -4,7 +4,7 @@ jobs:
     machine: true
     steps:
      - run: |
-        echo 'export IMAGE_TAG=$(git rev-parse HEAD | head -c 7)' >> $BASH_ENV
+        echo 'export IMAGE_TAG=$(cat ./VERSION)' >> $BASH_ENV
         source $BASH_ENV
 
      - checkout
@@ -22,11 +22,10 @@ jobs:
             curl -o ./argocd -L https://github.com/argoproj/argo-cd/releases/download/v1.3.0-rc4/argocd-linux-amd64 && chmod +x ./argocd
 
             ./argocd app create preview-$CIRCLE_PR_NUMBER \
-                --project demo \
                 --repo https://github.com/gitops-workshop/my-app-deployment \
                 --path . \
                 --dest-server https://kubernetes.default.svc \
-                --dest-namespace workshop \
+                --dest-namespace ci \
                 --nameprefix preview-$CIRCLE_PR_NUMBER \
                 --sync-policy automated
 

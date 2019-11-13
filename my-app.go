@@ -6,11 +6,9 @@ import (
 	"time"
 )
 
-var greeting = os.Getenv("GREETING")
-
 func main() {
 	for {
 		log.Println(os.Getenv("GREETING"))
-		time.Sleep(5000)
+		time.Sleep(1*time.Second)
 	}
 }

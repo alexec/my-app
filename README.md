@@ -4,24 +4,24 @@ Build:
 
 ```
 GOOS=linux GOARCH=amd64 go build .
-docker build -t my-app:v2 .
+docker build -t my-app:v1 .
 ```
 
 Run:
 
 ```
-docker run -P -p 8080:8080 -e GREETING=Howdy my-app:v2
+docker run -e GREETING=Howdy my-app:v1
 ```
 
 ### Release:
 
 ```
-docker tag my-app:v2 alexcollinsintuit/my-app:v2
-docker push alexcollinsintuit/my-app:v2
+docker tag my-app:v3 alexcollinsintuit/my-app:v1
+docker push alexcollinsintuit/my-app:v1
 ```
 
 ### Clean Up
 
 ```
-docker rmi my-app:v2
+docker rmi my-app:v1
 ```

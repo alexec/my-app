@@ -4,7 +4,7 @@ jobs:
     machine: true
     steps:
      - run: |
-        echo 'export IMAGE_TAG=$(cat ./VERSION)' >> $BASH_ENV
+        echo 'export IMAGE_TAG=$(git rev-parse HEAD | head -c 7)' >> $BASH_ENV
         source $BASH_ENV
 
      - checkout
@@ -27,7 +27,9 @@ jobs:
                 --dest-server https://kubernetes.default.svc \
                 --dest-namespace ci \
                 --nameprefix preview-$CIRCLE_PR_NUMBER \
-                --sync-policy automated
+                --sync-policy automated \
+                --kustomize-image gitopsworkshop/my-app:$IMAGE_TAG \
+                --upsert
 
             curl -H "Authorization: token $GITHUB_TOKEN" -XPOST -d "{\"event\": \"COMMENT\",  \"body\": \"Preview Application URL: https://$ARGOCD_SERVER/applications/preview-$CIRCLE_PR_NUMBER\"}" \
                 https://api.github.com/repos/gitops-workshop/my-app/pulls/$CIRCLE_PR_NUMBER/reviews
